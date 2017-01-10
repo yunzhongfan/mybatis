@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+	<!-- 添加数据库外部配置文件 -->
+	<properties resource="db.properties"></properties>
+
+	<!-- 为实体类引入别名，简化操作 -->
+	<typeAliases>
+		<!-- 简化方式1 ，通过typeAlias关键字进行简化,在引入参数的时候直接引入别名 <typeAlias type="mybaitsTest01.CRUDTtest.UserUser" 
+			alias="_User"/> 通过package关键字，引入包名直接进行简化 ，在引用的时候直接引用包名下的类名 <package name="mybatis.mapper"/> -->
+		<typeAlias type="mybatis.mapper.Order" alias="_Order" />
+		<typeAlias type="mybatis.mapper.Classes" alias="_Classes" />
+		<typeAlias type="mybatis.mapper.Teacher" alias="_Teacher" />
+		<typeAlias type="mybatis.mapper.ClassesOne" alias="_ClassesOne" />
+		<typeAlias type="mybatis.mapper.Student" alias="_Student" />
+
+
+	</typeAliases>
+
+	<environments default="development"><!-- 这里可以配置多种环境，每种环境对应一个sessionFactory -->
+		<environment id="development">
+			<transactionManager type="JDBC" /><!-- 事务管理类型 -->
+			<dataSource type="POOLED">
+
+				<!-- 配置方式1 -->
+				<!-- <property name="driver" value="com.mysql.jdbc.Driver" /> <property 
+					name="url" value="jdbc:mysql://localhost:3306/mybatis" /> <property name="username" 
+					value="root" /> <property name="password" value="mysql" /> -->
+
+				<!-- 引入外部文件进行配置 -->
+				<property name="driver" value="${driver}" />
+				<property name="url" value="${url}" />
+				<property name="username" value="${username}" />
+				<property name="password" value="${password}" />
+			</dataSource>
+		</environment>
+	</environments>
+
+	<!-- 引入注册文件 -->
+	<mappers>
+		<!--这里copy的是文件的路径名称，并不是文件的包名称 ，点击文件右键copy Qualified Name 去掉文件的项目名称 -->
+		<mapper resource="mybatis/mapper/userMapper.xml" />
+		<mapper resource="mybatis/mapper/orderMapper.xml" />
+		<mapper resource="mybatis/mapper/ClassesMapper.xml"/>  
+		<mapper resource="mybatis/mapper/TeacherMapper.xml"/> 
+		<!-- <mapper resource="mybaitsTest01/CRUDTtest/userMapper.xml" />  -->
+		<mapper class="UserMapper01.UserMapper" />
+		<mapper resource ="mybatis/mapper/ClassesOneMapper.xml"/> 
+		<mapper resource ="mybatis/mapper/TeacherMapper.xml"/> 
+
+	</mappers>
+</configuration>
