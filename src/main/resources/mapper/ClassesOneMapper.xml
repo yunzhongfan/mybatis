@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mybatis.mapper.ClassesOneMapper">
+
+	<!-- 一对多，查询一的一方 -->
+	<select id="getoneClasses" parameterType="int" resultMap="getClassesMap">
+		select c.* from class c,teacher t, student s where c.teacher_id=t.t_id and
+		c.c_id=s.class_id and c.c_id=#{id}
+	</select>
+
+	<!-- 一对多查询多的一方， -->
+	<select id="getmanyClasses" parameterType="int" resultMap="getClassesMap">
+		select s.* from class c,teacher t, student s where c.teacher_id=t.t_id
+		and c.c_id=s.class_id and c.c_id=#{id}
+	</select>
+
+	<!--方式一， 一对一关联查询，使用嵌套查询来处理映射处理结果的自封装数据查询（去除重复数据） -->
+	<resultMap type="_ClassesOne" id="getClassesMap">
+		<id property="id" column="c_id"></id>
+		<result property="name" column="c_name" />
+		<!-- 使用实体类映射和字段之间 的一一映射关系 -->
+		<association property="teacher" javaType="mybatis.mapper.Teacher">
+			<id property="id" column="t_id" />
+			<result property="id" column="t_name" />
+		</association>
+		<collection property="student" ofType="mybatis.mapper.Student">
+			<id property="id" column="s_id" />
+			<result property="name" column="s_name" />
+		</collection>
+	</resultMap>
+
+
+	<!-- 方式2.一对一关联映射处理 使用resultMap映射实体类和字段之间的一一对应关系 -->
+	<select id="getClasses2" parameterType="int" resultMap="getClassesMap2">
+		select c.* from class c where c.c_id=#{id}
+	</select>
+
+	<resultMap type="_ClassesOne" id="getClassesMap2">
+		<id property="id" column="c_id" />
+		<result property="name" column="c_name" />
+		<association property="teacher" column="c_teacher" select="getTeacher" />
+		<collection property="student" ofType="mybatis.mapper.Student"
+			column="c_id" select="getStudents"></collection>
+	</resultMap>
+	<select id="getTeacher" parameterType="int" resultType="_Teacher">
+		select t.t_id id,t.t_name name from teacher t where t.t_id=#{id}
+	</select>
+
+	<select id="getStudents" parameterType="int" resultType="_Student" resultMap="studentMap">
+		select s.* from student s where s.class_id=#{id}
+	</select>
+	
+	<resultMap type="_Student"  id="studentMap">
+			<id  property="id" column="s_id"/>
+			<result property="name" column="s_name"/>
+	</resultMap>
+</mapper>
